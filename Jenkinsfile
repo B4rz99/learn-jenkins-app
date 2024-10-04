@@ -6,7 +6,7 @@ pipeline {
     }
 
     stages {
-        stage('Build') {
+        /*stage('Build') {
             agent {
                 docker {
                     image 'node:18-alpine'
@@ -24,7 +24,7 @@ pipeline {
                     ls -la
                 '''
             }
-        }
+        }*/
 
         stage('Run Tests') {
             parallel {
@@ -75,6 +75,7 @@ pipeline {
                 sh '''
                     npm install netlify-cli
                     node_modules/.bin/netlify deploy --version
+                    echo "Deployed to Netlify ID: $NETLIFY_SITE_ID"
                 '''
             }
         }
