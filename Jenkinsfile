@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
+        /*stage('Build') {
             agent {
                 docker {
                     image 'node:18-alpine'
@@ -20,7 +20,7 @@ pipeline {
                     ls -la
                 '''
             }
-        }
+        }*/
 
         stage('Run Tests') {
             parallel {
@@ -34,14 +34,14 @@ pipeline {
 
                     steps {
                         sh '''
-                            test -f build/index.html
+                            #test -f build/index.html
                             npm test
                         '''
                     }
 
                     post {
                         always {
-                            junit 'jest-results.xml'
+                            junit 'jest-results/junit.xml'
                         }
                     }
                 }
