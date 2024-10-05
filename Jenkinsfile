@@ -6,6 +6,7 @@ pipeline {
     }
 
     stages {
+
         stage('Build') {
             agent {
                 docker {
@@ -13,7 +14,6 @@ pipeline {
                     reuseNode true
                 }
             }
-
             steps {
                 sh '''
                     ls -la
@@ -26,9 +26,9 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
+        stage('Tests') {
             parallel {
-                stage('Test') {
+                stage('Unit tests') {
                     agent {
                         docker {
                             image 'node:18-alpine'
@@ -42,7 +42,13 @@ pipeline {
                             npm test
                         '''
                     }
+                    post {
+                        always {
+                            junit 'jest-results/junit.xml'
+                        }
+                    }
                 }
+
                 stage('E2E') {
                     agent {
                         docker {
@@ -56,8 +62,14 @@ pipeline {
                             npm install serve
                             node_modules/.bin/serve -s build &
                             sleep 10
-                            npx playwright test
+                            npx playwright test  --reporter=html
                         '''
+                    }
+
+                    post {
+                        always {
+                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+                        }
                     }
                 }
             }
@@ -70,21 +82,13 @@ pipeline {
                     reuseNode true
                 }
             }
-
             steps {
                 sh '''
                     npm install netlify-cli
-                    node_modules/.bin/netlify deploy --version
-                    echo "Deployed to Netlify ID: $NETLIFY_SITE_ID"
+                    node_modules/.bin/netlify --version
+                    echo "Deploying to production. Site ID: $NETLIFY_SITE_ID"
                 '''
             }
-        }
-    }
-
-    post {
-        always {
-            junit 'jest-results/junit.xml'
-            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright HTML Report', reportTitles: '', useWrapperFileDirectly: true])
         }
     }
 }
