@@ -20,7 +20,8 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'AWS', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
                     sh '''
                         aws --version
-                        aws s3 cp build s3://my-bucket --recursive
+                        echo "Deploying to AWS S3" > index.html
+                        aws s3 cp index.html s3://obarbozaa-learn-jenkins/index.html
                     '''
                 }
             }
