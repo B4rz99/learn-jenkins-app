@@ -75,7 +75,7 @@ pipeline {
                 stage('E2E') {
                     agent {
                         docker {
-                            image 'playwright/chromium:playwright-1.48.0'
+                            image 'my-playwright'
                             reuseNode true
                         }
                     }
@@ -100,7 +100,7 @@ pipeline {
         stage('Deploy staging') {
             agent {
                     docker {
-                        image 'playwright/chromium:playwright-1.48.0'
+                        image 'my-playwright'
                         reuseNode true
                     }
                 }
@@ -129,7 +129,7 @@ pipeline {
         stage('Deploy production') {
             agent {
                     docker {
-                        image 'playwright/chromium:playwright-1.48.0'
+                        image 'my-playwright'
                         reuseNode true
                     }
                 }
