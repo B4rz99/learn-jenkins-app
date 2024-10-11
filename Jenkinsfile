@@ -10,11 +10,6 @@ pipeline {
     stages {
 
         stage('Docker'){
-
-            environment {
-                AWS_S3_BUCKET = 'obarbozaa-learn-jenkins'
-            }
-
             steps {
                 sh '''
                     docker build -t my-playwright .
@@ -48,6 +43,11 @@ pipeline {
                     reuseNode true
                     args '--entrypoint=""'
                 }
+
+            environment {
+                AWS_S3_BUCKET = 'obarbozaa-learn-jenkins'
+            }
+
             }
             steps {
                 withCredentials([usernamePassword(credentialsId: 'AWS', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
